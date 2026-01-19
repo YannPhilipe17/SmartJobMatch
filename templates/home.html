@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="hero">
+    <h1>Ne cherche plus, <span class="highlight">laisse ton cv chercher lui même.</span></h1>
+    <p class="subtitle"> analyse sémantiquement des CV spour trouver les offres qui correspondent le mieux.</p>
+
+<div class="upload-box">
+        <form method="POST" enctype="multipart/form-data">
+            
+            <div class="search-bar">
+                <input type="text" name="job_search" class="input-text" placeholder="Job visé (Laisser vide pour auto-détection)">
+                <input type="text" name="city_search" class="input-text" placeholder="Ville (ex: Paris)" value="Paris">
+            </div>
+
+            <label for="cv_upload" class="custom-file-upload">
+                📥 Importer mon CV & Lancer
+            </label>
+            <input id="cv_upload" name="cv_upload" type="file" accept=".pdf" onchange="this.form.submit()">
+            
+            <p class="small">Analyse locale & sécurisée. 100% Gratuit.</p>
+        </form>
+    </div>
+
+{% if error %}
+<div class="alert error">{{ error }}</div>
+{% endif %}
+
+{% if info %}
+<div style="text-align: center; margin-bottom: 20px; color: #2563EB; font-weight: bold;">
+    {{ info }}
+</div>
+{% endif %}
+
+{% if jobs %}
+<div class="results-container">
+    <h2>🎯 Offres recommandées pour toi</h2>
+    <div class="cards-grid">
+        {% for job in jobs %}
+        <div class="card {% if job.pourcentage > 60 %}high-match{% endif %}">
+            <div class="match-badge">{{ job.pourcentage }}% Match</div>
+            <div class="card-header">
+                <span class="tag-type">{{ job.type }}</span>
+                <span class="tag-loc">{{ job.ville }}</span>
+            </div>
+            <h3>{{ job.poste }}</h3>
+            <p class="company">{{ job.entreprise }}</p>
+            <p class="desc">{{ job.description }}</p>
+            <div class="tech-stack">
+                {% for skill in job.competences.split(',') %}
+                <span class="skill">{{ skill }}</span>
+                {% endfor %}
+            </div>
+            <a href="{{ job.url }}" class="btn-apply" target="_blank">Voir l'offre →</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}
